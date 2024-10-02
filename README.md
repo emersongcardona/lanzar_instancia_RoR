@@ -56,8 +56,9 @@ instrucciones para lanzar una instancia de ruby on rails
       - pegar en github ssh keys
     - cd /var/
     - sudo chown ubuntu www -R
+    - clonar el repo en www
     - git clone git@github.com:UVG-Teams/realestate-nft-marketplace.git
-    - mv realestate-nft-marketplace/ vesta.f-rosal.com/
+    - mv realestate-nft-marketplace/ vesta.f-rosal.com/   
     - cd vesta.f-rosal.com
     - BUNDLER_WITHOUT="development:test" bundle install
     - git checkout production
@@ -65,6 +66,8 @@ instrucciones para lanzar una instancia de ruby on rails
     - Crear DB en Lightsail
     - Settear credenciales
       - EDITOR="nano" rails credentials:edit --environment production
+      -  *crea un strin con rake secret y guardalo en este archivo como:
+          secret_key_base: "unstringrandomquesetrocurraogeneresenalgunlado"
         - Settear db credentials
         - Settear secret_key_base
     - RAILS_ENV=production rails db:drop
