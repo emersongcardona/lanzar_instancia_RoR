@@ -7,6 +7,7 @@ instrucciones para lanzar una instancia de ruby on rails
 - Actualizar los puertos del server: settear https y 3000
 - Actualizar los registros del dominio
 - Instalar Nginx, configurar Cerbot y Passenger
+- https://www.phusionpassenger.com/docs/tutorials/deploy_to_production/deploying_your_app/oss/aws/ruby/nginx/
   - Acceder al servidor por ssh
   - sudo apt update
   - sudo apt-get install nginx
@@ -31,7 +32,55 @@ instrucciones para lanzar una instancia de ruby on rails
 - Crear Nginx Virtual Host
   - Acceder al servidor por ssh
   - cd /etc/nginx/sites-available
-  - sudo nano vesta.f-rosal.com.conf
+  - sudo nano landagreenstore.com.conf
+  - configurar este archivo
+    -encontrar el path de ruby utiliza el comando
+    -passenger-config about ruby-command 
+    -referencia:
+           server {
+                listen 80;
+                server_name landagreenstore.com www.landagreenstore.com 52.38.48.164;
+            
+                # Redireccionar todo el tráfico HTTP a HTTPS
+                return 301 https://$host$request_uri;
+            }
+            
+            server {
+                listen 443 ssl; # Gestión SSL
+                server_name landagreenstore.com www.landagreenstore.com;
+            
+                # Configuración del root
+                root /var/www/landagreenstore.com/public;
+            
+                # Configuración de Passenger
+                passenger_enabled on;
+                passenger_app_env production;
+                passenger_ruby /usr/share/rvm/gems/ruby-3.2.2/wrappers/ruby;
+            
+            
+                # Manejo de las peticiones
+                location / {
+                    try_files $uri/index.html $uri.html $uri @app;
+                }
+            
+                location @app {
+                    passenger_enabled on;
+                    passenger_app_env production; # Asegúrate de que esto esté presente
+                }
+            
+                # Manejo de errores
+                error_page 500 502 503 504 /500.html;
+                location = /500.html {
+                    root /var/www/landagreenstore.com/public;
+                }
+            
+                # Configuración de SSL
+                ssl_certificate /etc/letsencrypt/live/www.landagreenstore.com/fullchain.pem; # Gestionado por Certbot
+                ssl_certificate_key /etc/letsencrypt/live/www.landagreenstore.com/privkey.pem; # Gestionado por Certbot
+                include /etc/letsencrypt/options-ssl-nginx.conf; # Gestionado por Certbot
+                ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # Gestionado por Certbot
+            }
+
 - Instalar backend
   - Instalar rvm
     - https://github.com/rvm/ubuntu_rvm
